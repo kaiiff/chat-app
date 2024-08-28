@@ -1,7 +1,5 @@
 
 
-
-
 import React, { useState } from "react";
 import MessageComponent from "./MessageComponent";
 
@@ -14,6 +12,7 @@ function ChatBox({
   setSearchQuery,
   loggedInUser,
   token,
+  socket // Add socket prop here
 }) {
   const [selectedProfileUser, setSelectedProfileUser] = useState(null);
 
@@ -28,10 +27,10 @@ function ChatBox({
       <div className="w-1/4 bg-white shadow-md p-4 overflow-y-auto">
         {/* Logged-in User Profile */}
         {loggedInUser && (
-          <div className="relative  mb-4">
-            <div className="flex items-center  mb-4">
+          <div className="relative mb-4">
+            <div className="flex items-center mb-4">
               <div
-                className=" flex relative cursor-pointer"
+                className="flex relative cursor-pointer"
                 onClick={() => handleProfileClick(loggedInUser)}
               >
                 <img
@@ -116,17 +115,9 @@ function ChatBox({
 
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-4">
-              <MessageComponent selectedChat={selectedChat} token={token} />
+              <MessageComponent selectedChat={selectedChat} socket={socket} />
             </div>
 
-            {/* Chat Input
-            <div className="p-4 border-t border-gray-300">
-              <input
-                type="text"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none"
-                placeholder="Type a message..."
-              />
-            </div> */}
           </div>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-600">
@@ -139,3 +130,4 @@ function ChatBox({
 }
 
 export default ChatBox;
+

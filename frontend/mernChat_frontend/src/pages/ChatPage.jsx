@@ -1,7 +1,12 @@
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
+import { io } from "socket.io-client";
 
 function ChatPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,12 +17,29 @@ function ChatPage() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const token = JSON.parse(localStorage.getItem("token"));
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (userInfo) {
+    // Set the logged-in user only once
+    if (!loggedInUser && userInfo) {
       setLoggedInUser(userInfo);
     }
-  }, []);
+  }, [userInfo, loggedInUser]);
+
+  useEffect(() => {
+    // Initialize Socket.IO only once when the token is available
+    if (!socket && token) {
+      const newSocket = io("http://localhost:5002", {
+        query: { token },
+      });
+
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.close();
+      };
+    }
+  }, [token, socket]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -52,6 +74,7 @@ function ChatPage() {
       );
       setSelectedChat(data);
       setSelectedUser(user);
+      socket.emit("joinChat", data._id);
     } catch (error) {
       console.error("Error creating or fetching chat:", error);
     }
@@ -67,6 +90,8 @@ function ChatPage() {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       loggedInUser={loggedInUser}
+      token={token}
+      socket={socket} // Pass socket here
     />
   );
 }

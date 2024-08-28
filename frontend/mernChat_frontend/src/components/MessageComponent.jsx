@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function MessageComponent({ selectedChat }) {
+function MessageComponent({ selectedChat, socket }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-
-  // Get token from local storage
   const token = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
-    if (selectedChat) {
+    if (selectedChat && socket) {
       fetchMessages(selectedChat._id);
+
+      socket.emit("joinChat", selectedChat._id);
+
+      socket.on("messageReceived", (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+
+      // Clean up the socket event listener when the component unmounts or the chat changes
+      return () => {
+        socket.off("messageReceived");
+      };
     }
-  }, [selectedChat]);
+  }, [selectedChat, socket]);
 
   const fetchMessages = async (chatId) => {
     try {
@@ -32,6 +41,10 @@ function MessageComponent({ selectedChat }) {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
+    if (!socket) {
+      console.error("Socket is not initialized");
+      return;
+    }
 
     try {
       const { data } = await axios.post(
@@ -45,6 +58,7 @@ function MessageComponent({ selectedChat }) {
       );
       setMessages([...messages, data.data]);
       setNewMessage("");
+      socket.emit("sendMessage", data.data);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -52,7 +66,6 @@ function MessageComponent({ selectedChat }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 border border-gray-300">
         {messages.length ? (
           messages.map((msg) => (
@@ -82,7 +95,6 @@ function MessageComponent({ selectedChat }) {
         )}
       </div>
 
-      {/* Chat Input */}
       <div className="py-4 border-t border-gray-300">
         <input
           type="text"
