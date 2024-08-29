@@ -36,7 +36,7 @@ function ChatBox({
     <div className="flex h-screen bg-gray-100">
       {/* Users Section */}
       <div className="w-1/4 bg-white shadow-md p-4 overflow-y-auto">
-        {/* loggedIn User Profile */}
+        {/* loggedIn User Profile click to display name and email of the user */}
         {loggedInUser && (
           <div className="relative mb-4">
             <div className="flex items-center mb-4">

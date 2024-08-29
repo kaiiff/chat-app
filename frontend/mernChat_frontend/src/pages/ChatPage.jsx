@@ -21,6 +21,8 @@ function ChatPage() {
     }
   }, [userInfo, loggedInUser]);
 
+
+  // initialize socket here 
   useEffect(() => {
     
     if (!socket && token) {
