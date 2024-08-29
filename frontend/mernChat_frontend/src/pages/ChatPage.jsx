@@ -1,8 +1,3 @@
-
-
-
-
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ChatBox from "../components/ChatBox";
@@ -20,14 +15,14 @@ function ChatPage() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Set the logged-in user only once
+    // Set loggedIn user once
     if (!loggedInUser && userInfo) {
       setLoggedInUser(userInfo);
     }
   }, [userInfo, loggedInUser]);
 
   useEffect(() => {
-    // Initialize Socket.IO only once when the token is available
+    
     if (!socket && token) {
       const newSocket = io("http://localhost:5002", {
         query: { token },
@@ -91,9 +86,12 @@ function ChatPage() {
       setSearchQuery={setSearchQuery}
       loggedInUser={loggedInUser}
       token={token}
-      socket={socket} // Pass socket here
+      socket={socket} // socket passing here
     />
   );
 }
 
 export default ChatPage;
+
+
+

@@ -1,6 +1,8 @@
 
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import MessageComponent from "./MessageComponent";
 
 function ChatBox({
@@ -12,20 +14,29 @@ function ChatBox({
   setSearchQuery,
   loggedInUser,
   token,
-  socket // Add socket prop here
+  socket, // add socket prop here
 }) {
   const [selectedProfileUser, setSelectedProfileUser] = useState(null);
+  const navigate = useNavigate(); 
 
-  // Handle clicking on a profile picture to show/hide the profile card
+  // handle clicking on a profile picture to show/hide the profile card
   const handleProfileClick = (user) => {
     setSelectedProfileUser((prevUser) => (prevUser === user ? null : user));
+  };
+
+  // logout 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+
+    navigate("/");
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Users Section */}
       <div className="w-1/4 bg-white shadow-md p-4 overflow-y-auto">
-        {/* Logged-in User Profile */}
+        {/* loggedIn User Profile */}
         {loggedInUser && (
           <div className="relative mb-4">
             <div className="flex items-center mb-4">
@@ -34,10 +45,7 @@ function ChatBox({
                 onClick={() => handleProfileClick(loggedInUser)}
               >
                 <img
-                  src={
-                    loggedInUser.pic ||
-                    "https://avatar.iran.liara.run/public/boy?username=Ash"
-                  }
+                  src={loggedInUser.pic}
                   className="w-12 h-12 rounded-full"
                   alt={loggedInUser.name}
                 />
@@ -54,7 +62,7 @@ function ChatBox({
 
         <h2 className="text-lg font-bold mb-4">Friends</h2>
 
-        {/* Search Bar */}
+        {/* search bar */}
         <input
           type="text"
           className="w-full px-3 py-2 mb-4 border rounded-lg focus:outline-none"
@@ -63,7 +71,7 @@ function ChatBox({
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        {/* User List */}
+        {/* User list */}
         <div className="space-y-3">
           {filteredUsers.map((user) => (
             <div
@@ -86,17 +94,25 @@ function ChatBox({
                   className="w-12 h-12 rounded-full mr-3"
                   alt={user.name}
                 />
-                {selectedProfileUser === user && (
+                {/* {selectedProfileUser === user && (
                   <div className="absolute left-14 bg-white border rounded-lg shadow-md p-3">
                     <p className="font-bold">{user.name}</p>
                     <p>{user.email}</p>
                   </div>
-                )}
+                )} */}
               </div>
               <span className="text-sm font-medium">{user.name}</span>
             </div>
           ))}
         </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
 
       {/* Chat Box Section */}
@@ -117,11 +133,19 @@ function ChatBox({
             <div className="flex-1 overflow-y-auto p-4">
               <MessageComponent selectedChat={selectedChat} socket={socket} />
             </div>
-
           </div>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-600">
-            <p>Select a user to start chatting</p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center"
+            >
+              <p className="text-xl font-semibold mb-2">No Chat Selected</p>
+              <p>Select a user to start chatting</p>
+            </motion.div>
+           
           </div>
         )}
       </div>
@@ -130,4 +154,5 @@ function ChatBox({
 }
 
 export default ChatBox;
+
 

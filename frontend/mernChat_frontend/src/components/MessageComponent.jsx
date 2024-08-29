@@ -16,7 +16,7 @@ function MessageComponent({ selectedChat, socket }) {
         setMessages((prevMessages) => [...prevMessages, message]);
       });
 
-      // Clean up the socket event listener when the component unmounts or the chat changes
+      // clean up the socket event listener when the component unmounts or the chat changes
       return () => {
         socket.off("messageReceived");
       };
@@ -120,3 +120,6 @@ function MessageComponent({ selectedChat, socket }) {
 }
 
 export default MessageComponent;
+
+
+
