@@ -115,7 +115,7 @@ exports.login = async (req, res) => {
 exports.allUsers = async (req, res) => {
   const userId = req.user;
 
-  // Helper function to escape special characters in the search input
+  // helper function to escape special characters in the search input (sanitization)
   const escapeRegex = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); 
   };
@@ -137,11 +137,11 @@ exports.allUsers = async (req, res) => {
   }
 
   try {
-    // Find users excluding the current user, and sort them alphabetically by name
+    
     const users = await user
       .find(keyword)
       .find({ _id: { $ne: userId } })
-      .sort({ name: 1 }); // 1 for ascending order
+      .sort({ name: 1 }); 
 
     res.send(users);
   } catch (error) {

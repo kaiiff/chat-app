@@ -59,6 +59,14 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", (newMessage) => {
     const chatId = newMessage.chat._id;
     io.to(chatId).emit("messageReceived", newMessage);
+
+   // Emit a notification to all clients in the chat room except the sender
+    socket.broadcast.to(chatId).emit("notifyNewMessage", {
+      chatId,
+      message: newMessage,
+    });
+
+
   });
 
   // Handle client disconnection
