@@ -10,6 +10,8 @@ function ChatPage() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+
+  
   const token = JSON.parse(localStorage.getItem("token"));
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [socket, setSocket] = useState(null);
